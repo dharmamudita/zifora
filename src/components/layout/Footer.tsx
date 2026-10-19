@@ -117,12 +117,11 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#87B7A5] gap-4">
-          <p>© {new Date().getFullYear()} ZIFORA. Dikembangkan untuk Lomba Sistem Informasi & Fintech Sosial Islam.</p>
+          <p>© {new Date().getFullYear()} ZIFORA (ZISWAF for a Better Era). Hak Cipta Dilindungi. Terintegrasi, Transparan, dan Terpercaya.</p>
           <div className="flex items-center space-x-4">
             <span className="flex items-center space-x-1">
-              <span>Diberdayakan dengan</span>
-              <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" />
-              <span>oleh Tim Pengembang</span>
+              <span>Sistem Manajemen ZISWAF Modern</span>
+              <span className="text-[#D4AF37] font-semibold">• Indonesia</span>
             </span>
           </div>
         </div>
