@@ -45,13 +45,13 @@ export async function uploadToCloudinary(file: File): Promise<UploadResult> {
     }
   }
 
-  // Graceful competition/demo fallback using local data URL
+  // Graceful offline fallback using local data URL
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {
       resolve({
         url: reader.result as string,
-        publicId: `zifora_demo_${Date.now()}`,
+        publicId: `zifora_asset_${Date.now()}`,
       });
     };
     reader.readAsDataURL(file);
