@@ -104,10 +104,10 @@ export const Footer: React.FC = () => {
             
             <div className="pt-2">
               <Link
-                to="/admin"
+                to="/portal"
                 className="inline-flex items-center space-x-1 text-[11px] text-[#D4AF37] hover:underline"
               >
-                <span>Masuk Portal Admin</span>
+                <span>Portal Akun & Layanan</span>
                 <ExternalLink className="w-3 h-3" />
               </Link>
             </div>

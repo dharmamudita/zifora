@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 
@@ -11,15 +11,15 @@ import { InfakSedekahPage } from './pages/InfakSedekahPage';
 import { PetaZiswafPage } from './pages/PetaZiswafPage';
 import { TransparansiPage } from './pages/TransparansiPage';
 import { CheckoutPage } from './pages/CheckoutPage';
-import { UserDashboardPage } from './pages/UserDashboardPage';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { PortalPage } from './pages/PortalPage';
 
 export const App: React.FC = () => {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-[#F8FAF9] text-[#111827]">
         <Navbar />
-        <main className="flex-grow">
+        {/* pt-20 to accommodate floating island navbar */}
+        <main className="flex-grow pt-20">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/zakat" element={<ZakatPage />} />
@@ -28,8 +28,10 @@ export const App: React.FC = () => {
             <Route path="/peta" element={<PetaZiswafPage />} />
             <Route path="/transparansi" element={<TransparansiPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/portal-donatur" element={<UserDashboardPage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            {/* Unified Account / Dashboard Portal */}
+            <Route path="/portal" element={<PortalPage />} />
+            <Route path="/portal-donatur" element={<Navigate to="/portal" replace />} />
+            <Route path="/admin" element={<Navigate to="/portal" replace />} />
             {/* Fallback route */}
             <Route path="*" element={<HomePage />} />
           </Routes>
