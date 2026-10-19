@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   UserCircle, 
   ShieldCheck, 
   Repeat, 
-  Lock, 
   ArrowRight, 
   CheckCircle2, 
-  Sparkles,
-  Mail,
-  Key
+  LogIn,
+  AlertCircle
 } from 'lucide-react';
 import { getCurrentUser, switchRole, UserProfile } from '../services/authStore';
 import { UserDashboardPage } from './UserDashboardPage';
 import { AdminDashboard } from './admin/AdminDashboard';
 
 export const PortalPage: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<UserProfile>(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(getCurrentUser());
   const [showSwitchModal, setShowSwitchModal] = useState(false);
-  const [inputEmail, setInputEmail] = useState('');
-  const [inputPassword, setInputPassword] = useState('');
-  const [authError, setAuthError] = useState('');
 
   useEffect(() => {
     const handleAuthChange = () => {
@@ -34,24 +30,53 @@ export const PortalPage: React.FC = () => {
     setShowSwitchModal(false);
   };
 
-  const handleManualLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanEmail = inputEmail.trim().toLowerCase();
+  // IF NOT LOGGED IN
+  if (!currentUser) {
+    return (
+      <div className="pt-28 sm:pt-36 pb-20 min-h-screen bg-[#F8FAF9] flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-zifora-lg border border-[#1B5E4B]/15 text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-[#E8F3EE] flex items-center justify-center mx-auto text-[#1B5E4B]">
+            <LogIn className="w-8 h-8" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-[#092820] font-serif">
+              Silakan Masuk Terlebih Dahulu
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              Portal data muzaki dan pengawasan admin ZIFORA memerlukan autentikasi akun.
+            </p>
+          </div>
 
-    if (cleanEmail === 'admin@zifora.org') {
-      switchRole('admin');
-      setShowSwitchModal(false);
-      setAuthError('');
-    } else if (cleanEmail.includes('admin')) {
-      switchRole('admin');
-      setShowSwitchModal(false);
-      setAuthError('');
-    } else {
-      switchRole('muzaki');
-      setShowSwitchModal(false);
-      setAuthError('');
-    }
-  };
+          <div className="space-y-3">
+            <Link
+              to="/login"
+              className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-[#1B5E4B] hover:bg-[#0F3E32] text-white shadow transition flex items-center justify-center space-x-2"
+            >
+              <span>Buka Halaman Login</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <div className="pt-2 flex items-center justify-center space-x-2 text-xs">
+              <span className="text-gray-400">Atau masuk cepat:</span>
+              <button
+                onClick={() => handleQuickSwitch('admin')}
+                className="font-bold text-[#D4AF37] hover:underline"
+              >
+                Admin
+              </button>
+              <span className="text-gray-300">•</span>
+              <button
+                onClick={() => handleQuickSwitch('muzaki')}
+                className="font-bold text-[#1B5E4B] hover:underline"
+              >
+                Donatur
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 min-h-screen bg-[#F8FAF9]">
@@ -107,10 +132,10 @@ export const PortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div>
                 <h3 className="text-lg font-bold text-[#092820] font-serif">
-                  Masuk ke Portal ZIFORA
+                  Ganti Akun Masuk
                 </h3>
                 <p className="text-xs text-gray-500">
-                  Gunakan akun Admin atau Akun Donatur untuk mengakses data.
+                  Pilih salah satu dari 2 akun terdaftar untuk melihat tampilannya:
                 </p>
               </div>
               <button
@@ -123,10 +148,6 @@ export const PortalPage: React.FC = () => {
 
             {/* Quick Demo Switcher Buttons */}
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider block">
-                Pilih Akun Cepat (Demo Lomba):
-              </span>
-              
               <button
                 type="button"
                 onClick={() => handleQuickSwitch('admin')}
@@ -141,8 +162,8 @@ export const PortalPage: React.FC = () => {
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900">Super Admin ZIFORA</h4>
-                    <p className="text-[10px] text-gray-500 font-mono">admin@zifora.org (Role: Admin)</p>
+                    <h4 className="text-xs font-bold text-gray-900">1. Akun Admin (Super Admin)</h4>
+                    <p className="text-[10px] text-gray-500 font-mono">admin@zifora.org (pass: admin123)</p>
                   </div>
                 </div>
                 {currentUser.role === 'admin' && (
@@ -164,8 +185,8 @@ export const PortalPage: React.FC = () => {
                     <UserCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900">Rahmat Hidayat, S.T.</h4>
-                    <p className="text-[10px] text-gray-500 font-mono">rahmat.h@gmail.com (Role: Donatur)</p>
+                    <h4 className="text-xs font-bold text-gray-900">2. Akun Pengguna (Rahmat Hidayat)</h4>
+                    <p className="text-[10px] text-gray-500 font-mono">user@zifora.org (pass: user123)</p>
                   </div>
                 </div>
                 {currentUser.role === 'muzaki' && (
@@ -174,36 +195,15 @@ export const PortalPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Manual Form Login */}
-            <form onSubmit={handleManualLogin} className="pt-3 border-t border-gray-100 space-y-3">
-              <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider block">
-                Atau Masukkan Email Akun:
-              </span>
-
-              <div>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
-                  <input
-                    type="email"
-                    value={inputEmail}
-                    onChange={(e) => setInputEmail(e.target.value)}
-                    placeholder="Ketik email (misal: admin@zifora.org)..."
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-300 text-xs focus:ring-2 focus:ring-[#1B5E4B]"
-                    required
-                  />
-                </div>
-                <p className="text-[10px] text-gray-400 mt-1">
-                  Tips: Masukkan email dengan kata "admin" untuk masuk sebagai Admin.
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#1B5E4B] text-white hover:bg-[#0F3E32] transition shadow"
+            <div className="pt-2 text-center">
+              <Link
+                to="/login"
+                onClick={() => setShowSwitchModal(false)}
+                className="text-xs text-[#1B5E4B] font-bold hover:underline"
               >
-                Masuk ke Akun Ini
-              </button>
-            </form>
+                Buka Halaman Form Login Lengkap
+              </Link>
+            </div>
 
           </div>
         </div>
