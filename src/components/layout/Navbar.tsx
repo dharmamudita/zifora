@@ -13,20 +13,22 @@ import {
   ShieldCheck, 
   ArrowRight, 
   Repeat, 
-  ChevronDown 
+  ChevronDown,
+  LogOut,
+  LogIn
 } from 'lucide-react';
-import { getCurrentUser, switchRole, UserProfile } from '../../services/authStore';
+import { getCurrentUser, switchRole, logout, UserProfile } from '../../services/authStore';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserProfile>(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(getCurrentUser());
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Listen to role changes
+  // Listen to role/login/logout changes
   useEffect(() => {
     const handleAuthChange = () => {
       setCurrentUser(getCurrentUser());
@@ -67,6 +69,12 @@ export const Navbar: React.FC = () => {
     navigate('/portal');
   };
 
+  const handleLogout = () => {
+    logout();
+    setAccountDropdownOpen(false);
+    navigate('/login');
+  };
+
   return (
     <header className="fixed top-4 inset-x-0 z-50 px-4 sm:px-6 pointer-events-none">
       <div className="max-w-6xl mx-auto pointer-events-auto">
@@ -98,7 +106,7 @@ export const Navbar: React.FC = () => {
               </div>
             </Link>
 
-            {/* Desktop Navigation Links (Floating Pill Tabs with Strong Dark Background) */}
+            {/* Desktop Navigation Links */}
             <nav 
               className="hidden lg:flex items-center space-x-1 p-1 rounded-full border border-[#1B5E4B]/80"
               style={{ backgroundColor: 'rgba(15, 62, 50, 0.9)' }}
@@ -123,7 +131,7 @@ export const Navbar: React.FC = () => {
               })}
             </nav>
 
-            {/* Right Action: CTA & Unified Account Pill */}
+            {/* Right Action: CTA & Unified Account Pill / Login Button */}
             <div className="hidden sm:flex items-center space-x-2.5">
               
               {/* Quick CTA */}
@@ -135,114 +143,140 @@ export const Navbar: React.FC = () => {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
 
-              {/* UNIFIED ACCOUNT DROPDOWN (User & Admin in ONE Place) */}
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                    currentUser.role === 'admin'
-                      ? 'bg-[#1B5E4B] text-[#FAF5E8] border-[#D4AF37] hover:brightness-110'
-                      : 'bg-[#0F3E32] text-[#E8F3EE] border-[#1B5E4B] hover:border-[#D4AF37]/50'
-                  }`}
-                >
-                  <div className="w-6 h-6 rounded-full bg-[#092820] flex items-center justify-center text-white border border-[#D4AF37]/40 flex-shrink-0">
-                    {currentUser.role === 'admin' ? (
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
-                    ) : (
-                      <UserCircle className="w-3.5 h-3.5 text-[#E8F3EE]" />
-                    )}
-                  </div>
-                  <div className="flex flex-col text-left leading-none">
-                    <span className="text-[11px] font-bold text-white max-w-[90px] truncate">
-                      {currentUser.name.split(' ')[0]}
-                    </span>
-                    <span className="text-[9px] text-[#D4AF37] uppercase font-mono font-bold">
-                      {currentUser.role === 'admin' ? 'Admin' : 'Muzaki'}
-                    </span>
-                  </div>
-                  <ChevronDown className="w-3 h-3 text-[#A3C9BC]" />
-                </button>
-
-                {/* Account Dropdown Popover */}
-                {accountDropdownOpen && (
-                  <div 
-                    className="absolute right-0 mt-3 w-72 border border-[#1B5E4B] shadow-2xl rounded-2xl p-4 text-white space-y-3 z-50 animate-fadeIn backdrop-blur-2xl"
-                    style={{ backgroundColor: '#092820' }}
+              {/* UNIFIED ACCOUNT OR LOGIN BUTTON */}
+              {currentUser ? (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                      currentUser.role === 'admin'
+                        ? 'bg-[#1B5E4B] text-[#FAF5E8] border-[#D4AF37] hover:brightness-110'
+                        : 'bg-[#0F3E32] text-[#E8F3EE] border-[#1B5E4B] hover:border-[#D4AF37]/50'
+                    }`}
                   >
-                    <div className="flex items-center space-x-3 pb-3 border-b border-[#1B5E4B]/60">
-                      <div className="w-10 h-10 rounded-full bg-[#1B5E4B] flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/30 font-bold flex-shrink-0">
-                        {currentUser.role === 'admin' ? 'A' : 'M'}
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <h4 className="text-xs font-bold text-white truncate">{currentUser.name}</h4>
-                        <p className="text-[11px] text-[#A3C9BC] truncate">{currentUser.email}</p>
-                        <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#1B5E4B] text-[#D4AF37]">
-                          Peran: {currentUser.role === 'admin' ? 'Administrator ZIFORA' : 'Muzaki / Donatur'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1 text-xs">
-                      <Link
-                        to="/portal"
-                        onClick={() => setAccountDropdownOpen(false)}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#1B5E4B] hover:bg-[#2D7D67] transition text-white font-semibold"
-                      >
-                        <span className="flex items-center space-x-2">
-                          <UserCircle className="w-4 h-4 text-[#D4AF37]" />
-                          <span>Buka Dashboard {currentUser.role === 'admin' ? 'Admin' : 'Muzaki'}</span>
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-
-                    {/* Fast Switch Role Toggle */}
-                    <div className="pt-2 border-t border-[#1B5E4B]/50">
-                      <span className="text-[10px] text-[#87B7A5] uppercase font-bold block mb-1.5">
-                        Ganti Akun Masuk:
-                      </span>
-
-                      {currentUser.role === 'muzaki' ? (
-                        <button
-                          type="button"
-                          onClick={() => handleSwitchAccount('admin')}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-[#D4AF37]/50 text-left text-xs text-[#FAF5E8] transition"
-                        >
-                          <span className="flex items-center space-x-2">
-                            <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
-                            <span>Masuk sebagai <strong>Admin ZIFORA</strong></span>
-                          </span>
-                          <Repeat className="w-3.5 h-3.5 text-[#D4AF37]" />
-                        </button>
+                    <div className="w-6 h-6 rounded-full bg-[#092820] flex items-center justify-center text-white border border-[#D4AF37]/40 flex-shrink-0">
+                      {currentUser.role === 'admin' ? (
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleSwitchAccount('muzaki')}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-gray-600 text-left text-xs text-[#E8F3EE] transition"
-                        >
-                          <span className="flex items-center space-x-2">
-                            <UserCircle className="w-4 h-4 text-[#87B7A5]" />
-                            <span>Masuk sebagai <strong>Muzaki (Rahmat)</strong></span>
-                          </span>
-                          <Repeat className="w-3.5 h-3.5 text-[#87B7A5]" />
-                        </button>
+                        <UserCircle className="w-3.5 h-3.5 text-[#E8F3EE]" />
                       )}
                     </div>
-                  </div>
-                )}
-              </div>
+                    <div className="flex flex-col text-left leading-none">
+                      <span className="text-[11px] font-bold text-white max-w-[90px] truncate">
+                        {currentUser.name.split(' ')[0]}
+                      </span>
+                      <span className="text-[9px] text-[#D4AF37] uppercase font-mono font-bold">
+                        {currentUser.role === 'admin' ? 'Admin' : 'Muzaki'}
+                      </span>
+                    </div>
+                    <ChevronDown className="w-3 h-3 text-[#A3C9BC]" />
+                  </button>
+
+                  {/* Account Dropdown Popover */}
+                  {accountDropdownOpen && (
+                    <div 
+                      className="absolute right-0 mt-3 w-72 border border-[#1B5E4B] shadow-2xl rounded-2xl p-4 text-white space-y-3 z-50 animate-fadeIn backdrop-blur-2xl"
+                      style={{ backgroundColor: '#092820' }}
+                    >
+                      <div className="flex items-center space-x-3 pb-3 border-b border-[#1B5E4B]/60">
+                        <div className="w-10 h-10 rounded-full bg-[#1B5E4B] flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/30 font-bold flex-shrink-0">
+                          {currentUser.role === 'admin' ? 'A' : 'M'}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                          <h4 className="text-xs font-bold text-white truncate">{currentUser.name}</h4>
+                          <p className="text-[11px] text-[#A3C9BC] truncate">{currentUser.email}</p>
+                          <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#1B5E4B] text-[#D4AF37]">
+                            Peran: {currentUser.role === 'admin' ? 'Administrator ZIFORA' : 'Muzaki / Donatur'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1 text-xs">
+                        <Link
+                          to="/portal"
+                          onClick={() => setAccountDropdownOpen(false)}
+                          className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#1B5E4B] hover:bg-[#2D7D67] transition text-white font-semibold"
+                        >
+                          <span className="flex items-center space-x-2">
+                            <UserCircle className="w-4 h-4 text-[#D4AF37]" />
+                            <span>Buka Dashboard {currentUser.role === 'admin' ? 'Admin' : 'Muzaki'}</span>
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+
+                      {/* Fast Switch Role Toggle */}
+                      <div className="pt-2 border-t border-[#1B5E4B]/50 space-y-2">
+                        <span className="text-[10px] text-[#87B7A5] uppercase font-bold block mb-1">
+                          Ganti Akun Masuk:
+                        </span>
+
+                        {currentUser.role === 'muzaki' ? (
+                          <button
+                            type="button"
+                            onClick={() => handleSwitchAccount('admin')}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-[#D4AF37]/50 text-left text-xs text-[#FAF5E8] transition"
+                          >
+                            <span className="flex items-center space-x-2">
+                              <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                              <span>Masuk sebagai <strong>Admin ZIFORA</strong></span>
+                            </span>
+                            <Repeat className="w-3.5 h-3.5 text-[#D4AF37]" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSwitchAccount('muzaki')}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-gray-600 text-left text-xs text-[#E8F3EE] transition"
+                          >
+                            <span className="flex items-center space-x-2">
+                              <UserCircle className="w-4 h-4 text-[#87B7A5]" />
+                              <span>Masuk sebagai <strong>Muzaki (Rahmat)</strong></span>
+                            </span>
+                            <Repeat className="w-3.5 h-3.5 text-[#87B7A5]" />
+                          </button>
+                        )}
+
+                        {/* Logout Button */}
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-rose-300 hover:bg-rose-950/40 border border-rose-900/50 text-left text-xs transition"
+                        >
+                          <span className="flex items-center space-x-2">
+                            <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                            <span>Keluar dari Akun</span>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-[#1B5E4B] text-white hover:bg-[#2D7D67] border border-[#2D7D67] transition-all shadow"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>Masuk</span>
+                </Link>
+              )}
 
             </div>
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Hamburger & Profile Button */}
             <div className="flex sm:hidden items-center space-x-2">
               <Link
-                to="/portal"
+                to={currentUser ? "/portal" : "/login"}
                 className="p-1.5 rounded-full bg-[#1B5E4B] text-white"
-                title="Akun Saya"
+                title={currentUser ? "Akun Saya" : "Masuk"}
               >
-                <UserCircle className="w-5 h-5 text-[#D4AF37]" />
+                {currentUser ? (
+                  <UserCircle className="w-5 h-5 text-[#D4AF37]" />
+                ) : (
+                  <LogIn className="w-5 h-5 text-[#D4AF37]" />
+                )}
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -262,12 +296,25 @@ export const Navbar: React.FC = () => {
             className="sm:hidden mt-2 border border-[#1B5E4B] rounded-3xl p-4 shadow-2xl space-y-2 animate-fadeIn text-white backdrop-blur-2xl"
             style={{ backgroundColor: 'rgba(9, 40, 32, 0.98)' }}
           >
-            <div className="flex items-center justify-between px-2 pb-2 border-b border-[#1B5E4B]/50">
-              <span className="text-xs text-[#A3C9BC]">Akun: <strong className="text-white">{currentUser.name}</strong></span>
-              <span className="text-[10px] uppercase font-bold text-[#D4AF37] bg-[#1B5E4B] px-2 py-0.5 rounded-full">
-                {currentUser.role}
-              </span>
-            </div>
+            {currentUser ? (
+              <div className="flex items-center justify-between px-2 pb-2 border-b border-[#1B5E4B]/50">
+                <span className="text-xs text-[#A3C9BC]">Akun: <strong className="text-white">{currentUser.name}</strong></span>
+                <span className="text-[10px] uppercase font-bold text-[#D4AF37] bg-[#1B5E4B] px-2 py-0.5 rounded-full">
+                  {currentUser.role}
+                </span>
+              </div>
+            ) : (
+              <div className="pb-2 border-b border-[#1B5E4B]/50">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-2 px-3 rounded-xl bg-[#1B5E4B] text-white text-xs font-bold flex items-center justify-center space-x-2"
+                >
+                  <LogIn className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Masuk ke Akun ZIFORA</span>
+                </Link>
+              </div>
+            )}
 
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -287,28 +334,42 @@ export const Navbar: React.FC = () => {
               );
             })}
 
-            <div className="pt-2 border-t border-[#1B5E4B]/60 space-y-2">
-              <Link
-                to="/portal"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1B5E4B] text-xs font-bold text-white"
-              >
-                <span>Buka Dashboard ({currentUser.role})</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+            {currentUser && (
+              <div className="pt-2 border-t border-[#1B5E4B]/60 space-y-2">
+                <Link
+                  to="/portal"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1B5E4B] text-xs font-bold text-white"
+                >
+                  <span>Buka Dashboard ({currentUser.role})</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
 
-              <button
-                type="button"
-                onClick={() => {
-                  handleSwitchAccount(currentUser.role === 'admin' ? 'muzaki' : 'admin');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs bg-[#0F3E32] text-[#D4AF37] border border-[#1B5E4B]"
-              >
-                <span>Ganti ke Akun {currentUser.role === 'admin' ? 'Muzaki' : 'Admin'}</span>
-                <Repeat className="w-3.5 h-3.5" />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSwitchAccount(currentUser.role === 'admin' ? 'muzaki' : 'admin');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs bg-[#0F3E32] text-[#D4AF37] border border-[#1B5E4B]"
+                >
+                  <span>Ganti ke Akun {currentUser.role === 'admin' ? 'Muzaki' : 'Admin'}</span>
+                  <Repeat className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-rose-300 bg-rose-950/40 border border-rose-900/60"
+                >
+                  <span>Keluar</span>
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         )}
 
