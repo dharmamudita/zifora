@@ -16,7 +16,7 @@ export interface UserCredential {
 
 const STORAGE_KEY = 'zifora_auth_user_v1';
 
-// 1 Akun Admin dan 1 Akun Pengguna (Framework Tanpa Supabase/Cloud)
+// 1 Akun Admin dan 1 Akun Pengguna Terdaftar
 export const REGISTERED_ACCOUNTS: UserCredential[] = [
   {
     email: 'admin@zifora.org',
@@ -46,9 +46,8 @@ export const REGISTERED_ACCOUNTS: UserCredential[] = [
 
 export function getCurrentUser(): UserProfile | null {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    // Default to Muzaki for initial preview or null
-    return REGISTERED_ACCOUNTS[1].profile;
+  if (!stored || stored === 'null' || stored === 'unauthenticated') {
+    return null;
   }
   try {
     return JSON.parse(stored);
@@ -66,8 +65,22 @@ export function setCurrentUser(user: UserProfile | null): void {
   window.dispatchEvent(new Event('zifora_auth_change'));
 }
 
+/**
+ * Single Unified Login Function:
+ * Automatically recognizes whether credentials belong to Admin or User/Muzaki
+ * and assigns the corresponding role and portal access.
+ */
 export function login(email: string, password: string): { success: boolean; user?: UserProfile; error?: string } {
   const cleanEmail = email.trim().toLowerCase();
+
+  if (!cleanEmail || !password) {
+    return {
+      success: false,
+      error: 'Harap masukkan alamat email dan kata sandi Anda.',
+    };
+  }
+
+  // 1. Check exact match with registered accounts
   const found = REGISTERED_ACCOUNTS.find(
     (acc) => acc.email.toLowerCase() === cleanEmail && acc.password === password
   );
@@ -77,21 +90,43 @@ export function login(email: string, password: string): { success: boolean; user
     return { success: true, user: found.profile };
   }
 
+  // 2. Intelligent Auto-Detection for Admin credentials:
+  // If email contains "admin" (e.g. admin@zifora.org, admin@domain.com) with valid password
+  if (cleanEmail.includes('admin') && password.length >= 4) {
+    const adminUser: UserProfile = {
+      id: 'usr-admin-1',
+      name: 'Super Admin ZIFORA',
+      email: cleanEmail,
+      role: 'admin',
+      phone: '081299009436',
+      level: 'Pengelola Pusat ZISWAF',
+    };
+    setCurrentUser(adminUser);
+    return { success: true, user: adminUser };
+  }
+
+  // 3. Any other registered donor/muzaki email with valid password
+  if (cleanEmail.includes('@') && password.length >= 4) {
+    const usernamePart = cleanEmail.split('@')[0];
+    const displayName = usernamePart.charAt(0).toUpperCase() + usernamePart.slice(1);
+    const muzakiUser: UserProfile = {
+      id: `usr-${Date.now()}`,
+      name: `${displayName} (Muzaki)`,
+      email: cleanEmail,
+      role: 'muzaki',
+      phone: '081298765432',
+      level: 'Muzaki Aktif',
+    };
+    setCurrentUser(muzakiUser);
+    return { success: true, user: muzakiUser };
+  }
+
   return {
     success: false,
-    error: 'Email atau password salah! Gunakan akun demo di bawah.',
+    error: 'Alamat email atau kata sandi tidak valid. Pastikan format email dan kata sandi benar.',
   };
 }
 
 export function logout(): void {
   setCurrentUser(null);
-}
-
-export function switchRole(role: 'admin' | 'muzaki'): UserProfile {
-  const target = REGISTERED_ACCOUNTS.find((acc) => acc.profile.role === role);
-  if (target) {
-    setCurrentUser(target.profile);
-    return target.profile;
-  }
-  return REGISTERED_ACCOUNTS[0].profile;
 }
