@@ -112,17 +112,17 @@ zifora/
 ---
 
 ### 4.2 Sistem Pembayaran Inovatif: QRIS DANA Bisnis + Engine Verifikasi Otomatis
-1. **Mekanisme Kode Unik (Diskon Otomatis):**
-   - Agar pembeli **tidak merasa terbebani biaya admin**, sistem menerapkan **diskon kode unik** (pengurang).
-   - Contoh: Donasi Rp 50.000 -> Sistem mengacak kode unik `142` -> Total bayar **Rp 49.858**.
-   - Tampilan di invoice:
-     - Donasi: Rp 50.000
-     - Kode Verifikasi Instan (Diskon): `- Rp 142`
-     - **Jumlah Ditransfer: Rp 49.858**
+1. **Mekanisme Kode Unik Verifikasi (Maksimal < Rp 500):**
+   - Sistem menambahkan **3 digit acak kode verifikasi** (rentang 1 s.d. 499 perak) di atas nominal dasar donasi agar tidak membebani donatur.
+   - Contoh: Donasi pokok Rp 50.000 -> Sistem mengacak kode unik `187` -> Total bayar **Rp 50.187**.
+   - Rincian invoice transparan:
+     - Donasi Pokok: Rp 50.000
+     - Kode Unik Verifikasi Sistem: `+ Rp 187` *(Otomatis, < Rp 500)*
+     - **Total Ditransfer: Rp 50.187**
 2. **Visual QRIS & Hitung Mundur:**
    - Menampilkan QR Code DANA Bisnis.
-   - Tombol "Salin Nominal Tepat" agar donatur tidak salah transfer.
-   - Timer countdown 15 menit.
+   - Tombol "Salin Nominal Tepat" agar donatur tidak salah transfer sampai digit terakhir.
+   - Timer countdown 15 menit untuk mengunci alokasi kode unik tersebut.
 3. **Live Polling / Real-time Status Changer:**
    - Halaman checkout secara real-time memantau status pembayaran di Supabase.
    - Begitu transaksi dinyatakan lunas (melalui webhook bot HP / simulasi admin), layar otomatis berubah:
