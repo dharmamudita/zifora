@@ -30,7 +30,7 @@ export const WakafPage: React.FC = () => {
   const totalWakafValuation = assets.reduce((acc, a) => acc + a.estimated_value, 0);
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen bg-[#F8FAF9] pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Banner Section */}
