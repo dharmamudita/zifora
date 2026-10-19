@@ -6,6 +6,7 @@ import {
   Eye, 
   EyeOff, 
   ArrowRight, 
+  ArrowLeft,
   AlertCircle,
   CheckCircle2,
   ShieldCheck
@@ -44,19 +45,30 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] pt-28 sm:pt-36 pb-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-6">
+    <div className="flex-1 flex flex-col items-center justify-center pt-28 sm:pt-32 pb-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-5">
         
+        {/* Navigation back */}
+        <div className="flex items-center justify-between">
+          <Link
+            to="/"
+            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-gray-500 hover:text-[#1B5E4B] transition-colors group"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Kembali ke Beranda</span>
+          </Link>
+        </div>
+
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center space-x-2 group mb-1">
+        <div className="text-center space-y-1.5">
+          <Link to="/" className="inline-flex items-center space-x-2 group">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#1B5E4B] via-[#2D7D67] to-[#D4AF37] p-0.5 flex items-center justify-center shadow-md">
               <div className="w-full h-full bg-[#0F3E32] rounded-full flex items-center justify-center">
                 <span className="text-xl font-bold text-[#D4AF37] font-serif">Z</span>
               </div>
             </div>
           </Link>
-          <h1 className="text-3xl font-extrabold text-[#092820] font-serif tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#092820] font-serif tracking-tight">
             Masuk ke Akun ZIFORA
           </h1>
           <p className="text-xs text-gray-500 max-w-sm mx-auto leading-relaxed">
@@ -163,6 +175,11 @@ export const LoginPage: React.FC = () => {
             <span>Koneksi aman terenkripsi SSL 256-bit</span>
           </div>
 
+        </div>
+
+        {/* Minimal Dedicated Auth Footer */}
+        <div className="text-center text-[11px] text-gray-400">
+          <p>© {new Date().getFullYear()} ZIFORA • Terintegrasi, Transparan, dan Terpercaya.</p>
         </div>
 
       </div>
