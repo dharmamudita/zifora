@@ -12,6 +12,7 @@ import { PetaZiswafPage } from './pages/PetaZiswafPage';
 import { TransparansiPage } from './pages/TransparansiPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { PortalPage } from './pages/PortalPage';
+import { LoginPage } from './pages/LoginPage';
 
 export const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ export const App: React.FC = () => {
             <Route path="/checkout" element={<CheckoutPage />} />
             {/* Unified Account / Dashboard Portal */}
             <Route path="/portal" element={<PortalPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/portal-donatur" element={<Navigate to="/portal" replace />} />
             <Route path="/admin" element={<Navigate to="/portal" replace />} />
             {/* Fallback route */}
