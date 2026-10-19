@@ -47,7 +47,7 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-20">
       
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#0F3E32] via-[#092820] to-[#0F3E32] text-white pt-16 pb-24 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#092820] via-[#0F3E32] to-[#092820] text-white pt-28 sm:pt-36 pb-24 px-4 sm:px-6 lg:px-8">
         
         {/* Subtle Background Glow & Islamic Geometric Pattern */}
         <div className="absolute inset-0 bg-islamic-pattern opacity-15 pointer-events-none" />

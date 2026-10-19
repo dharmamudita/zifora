@@ -18,8 +18,8 @@ export const App: React.FC = () => {
     <Router>
       <div className="min-h-screen flex flex-col bg-[#F8FAF9] text-[#111827]">
         <Navbar />
-        {/* pt-20 to accommodate floating island navbar */}
-        <main className="flex-grow pt-20">
+        {/* Main body without gap so hero flows to top */}
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/zakat" element={<ZakatPage />} />
