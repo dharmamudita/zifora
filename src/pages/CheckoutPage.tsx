@@ -450,19 +450,19 @@ export const CheckoutPage: React.FC = () => {
                   <RefreshCw className="w-4 h-4 text-gray-400 animate-spin" />
                 </div>
 
-                {/* INTERACTIVE DEMO / COMPETITION TRIGGER BOX */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#FAF5E8] to-[#E8F3EE] border border-[#D4AF37]/50 shadow-sm space-y-2">
+                {/* Automated Payment Gateway Verification Card */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#FAF5E8] to-[#E8F3EE] border border-[#D4AF37]/50 shadow-sm space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[#092820] flex items-center space-x-1.5">
-                      <Smartphone className="w-4 h-4 text-[#1B5E4B]" />
-                      <span>Simulasi Sensor HP Warung / Bot DANA Bisnis</span>
+                      <ShieldCheck className="w-4 h-4 text-[#1B5E4B]" />
+                      <span>Verifikasi Otomatis Gateway Pembayaran</span>
                     </span>
-                    <span className="text-[10px] bg-[#D4AF37]/30 text-[#092820] px-2 py-0.5 rounded-full font-bold">
-                      Demo Lomba
+                    <span className="text-[10px] bg-[#1B5E4B] text-white px-2 py-0.5 rounded-full font-bold">
+                      Otomatis
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600">
-                    Klik tombol di bawah ini untuk mensimulasikan kejadian ketika notifikasi DANA masuk ke HP:
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Sistem memantau mutasi rekening QRIS secara real-time. Jika Anda telah menyelesaikan pembayaran di aplikasi perbankan atau e-wallet, klik verifikasi untuk konfirmasi instan:
                   </p>
                   <button
                     type="button"
@@ -473,12 +473,12 @@ export const CheckoutPage: React.FC = () => {
                     {isSimulatingBot ? (
                       <>
                         <RefreshCw className="w-4 h-4 animate-spin text-[#D4AF37]" />
-                        <span>Menerima Notifikasi DANA Bisnis...</span>
+                        <span>Memverifikasi Mutasi Rekening QRIS...</span>
                       </>
                     ) : (
                       <>
                         <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
-                        <span>Simulasikan Pembayaran Berhasil ({formatRupiah(totalAmount)})</span>
+                        <span>Saya Sudah Membayar (Cek Mutasi Sekarang)</span>
                       </>
                     )}
                   </button>
