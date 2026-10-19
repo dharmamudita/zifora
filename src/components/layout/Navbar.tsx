@@ -12,12 +12,11 @@ import {
   UserCircle, 
   ShieldCheck, 
   ArrowRight, 
-  Repeat, 
   ChevronDown,
   LogOut,
   LogIn
 } from 'lucide-react';
-import { getCurrentUser, switchRole, logout, UserProfile } from '../../services/authStore';
+import { getCurrentUser, logout, UserProfile } from '../../services/authStore';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -61,12 +60,6 @@ export const Navbar: React.FC = () => {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
     return false;
-  };
-
-  const handleSwitchAccount = (targetRole: 'admin' | 'muzaki') => {
-    switchRole(targetRole);
-    setAccountDropdownOpen(false);
-    navigate('/portal');
   };
 
   const handleLogout = () => {
@@ -187,7 +180,7 @@ export const Navbar: React.FC = () => {
                           <h4 className="text-xs font-bold text-white truncate">{currentUser.name}</h4>
                           <p className="text-[11px] text-[#A3C9BC] truncate">{currentUser.email}</p>
                           <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#1B5E4B] text-[#D4AF37]">
-                            Peran: {currentUser.role === 'admin' ? 'Administrator ZIFORA' : 'Muzaki / Donatur'}
+                            {currentUser.role === 'admin' ? 'Administrator ZIFORA' : 'Muzaki / Donatur'}
                           </span>
                         </div>
                       </div>
@@ -206,39 +199,8 @@ export const Navbar: React.FC = () => {
                         </Link>
                       </div>
 
-                      {/* Fast Switch Role Toggle */}
-                      <div className="pt-2 border-t border-[#1B5E4B]/50 space-y-2">
-                        <span className="text-[10px] text-[#87B7A5] uppercase font-bold block mb-1">
-                          Ganti Akun Masuk:
-                        </span>
-
-                        {currentUser.role === 'muzaki' ? (
-                          <button
-                            type="button"
-                            onClick={() => handleSwitchAccount('admin')}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-[#D4AF37]/50 text-left text-xs text-[#FAF5E8] transition"
-                          >
-                            <span className="flex items-center space-x-2">
-                              <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
-                              <span>Masuk sebagai <strong>Admin ZIFORA</strong></span>
-                            </span>
-                            <Repeat className="w-3.5 h-3.5 text-[#D4AF37]" />
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => handleSwitchAccount('muzaki')}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0F3E32] hover:bg-[#1B5E4B] border border-gray-600 text-left text-xs text-[#E8F3EE] transition"
-                          >
-                            <span className="flex items-center space-x-2">
-                              <UserCircle className="w-4 h-4 text-[#87B7A5]" />
-                              <span>Masuk sebagai <strong>Muzaki (Rahmat)</strong></span>
-                            </span>
-                            <Repeat className="w-3.5 h-3.5 text-[#87B7A5]" />
-                          </button>
-                        )}
-
-                        {/* Logout Button */}
+                      {/* Logout Action */}
+                      <div className="pt-2 border-t border-[#1B5E4B]/50">
                         <button
                           type="button"
                           onClick={handleLogout}
@@ -348,24 +310,12 @@ export const Navbar: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    handleSwitchAccount(currentUser.role === 'admin' ? 'muzaki' : 'admin');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs bg-[#0F3E32] text-[#D4AF37] border border-[#1B5E4B]"
-                >
-                  <span>Ganti ke Akun {currentUser.role === 'admin' ? 'Muzaki' : 'Admin'}</span>
-                  <Repeat className="w-3.5 h-3.5" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
                   className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-rose-300 bg-rose-950/40 border border-rose-900/60"
                 >
-                  <span>Keluar</span>
+                  <span>Keluar dari Akun</span>
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
