@@ -6,12 +6,15 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
   
   body {
     background-color: #F8FAF9;
     color: #111827;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
